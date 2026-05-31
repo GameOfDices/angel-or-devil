@@ -677,7 +677,7 @@ const I18N = {
     statsSin: 'Sünde',
     statsColM: '♂',
     statsColF: '♀',
-    footerText: 'Alle Angaben anonym & lokal gespeichert',
+    footerText: 'Alle Angaben anonym & global gespeichert',
   },
   en: {
     title: 'Little Angel or Little Devil?',
@@ -704,7 +704,7 @@ const I18N = {
     statsSin: 'Sin',
     statsColM: '♂',
     statsColF: '♀',
-    footerText: 'All data anonymous & stored locally',
+    footerText: 'All data anonymous & stored globally',
   },
   ru: {
     title: 'Ангелочек или Чертёнок?',
@@ -731,7 +731,7 @@ const I18N = {
     statsSin: 'Грех',
     statsColM: '♂',
     statsColF: '♀',
-    footerText: 'Все данные анонимны и хранятся локально',
+    footerText: 'Все данные анонимны и хранятся глобально',
   },
   uk: {
     title: 'Янголятко чи Чортеня?',
@@ -758,7 +758,7 @@ const I18N = {
     statsSin: 'Гріх',
     statsColM: '♂',
     statsColF: '♀',
-    footerText: 'Всі дані анонімні та зберігаються локально',
+    footerText: 'Всі дані анонімні та зберігаються глобально',
   },
 };
 
@@ -770,27 +770,18 @@ let selectedGender = null;
 const checked = new Set();
 
 // ─────────────────────────────────────────
-// STATISTICS (localStorage)
+// STATISTICS (global API)
 // ─────────────────────────────────────────
-function loadStats() {
+const API_BASE = 'https://angel-or-devil-backend.onrender.com';
+
+async function recordStats(gender, score) {
   try {
-    return JSON.parse(localStorage.getItem('etStats') || 'null') || { sins: {}, totalM: 0, totalF: 0, countM: 0, countF: 0 };
-  } catch { return { sins: {}, totalM: 0, totalF: 0, countM: 0, countF: 0 }; }
-}
-
-function saveStats(stats) {
-  try { localStorage.setItem('etStats', JSON.stringify(stats)); } catch {}
-}
-
-function recordStats(gender, score) {
-  const stats = loadStats();
-  if (gender === 'm') { stats.totalM += score; stats.countM++; }
-  else if (gender === 'f') { stats.totalF += score; stats.countF++; }
-  checked.forEach(id => {
-    if (!stats.sins[id]) stats.sins[id] = { m: 0, f: 0, d: 0 };
-    stats.sins[id][gender] = (stats.sins[id][gender] || 0) + 1;
-  });
-  saveStats(stats);
+    await fetch(API_BASE + '/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gender, score, sins: [...checked] })
+    });
+  } catch {}
 }
 
 // ─────────────────────────────────────────
@@ -862,14 +853,14 @@ function setLang(lang) {
 // ─────────────────────────────────────────
 // CALCULATE
 // ─────────────────────────────────────────
-function calculate() {
+async function calculate() {
   const name = document.getElementById('username').value.trim();
   if (!name || checked.size === 0 || !selectedGender) return;
 
   let score = 0;
   checked.forEach(id => { score += SINS[id].p; });
 
-  recordStats(selectedGender, score);
+  await recordStats(selectedGender, score);
 
   const tiers = TIERS[currentLang];
   const tier = tiers.find(t => score >= t.min && score <= t.max) || tiers[tiers.length - 1];
@@ -909,18 +900,22 @@ function resetGame() {
 // ─────────────────────────────────────────
 // STATS PANEL
 // ─────────────────────────────────────────
-function toggleStats() {
+async function toggleStats() {
   const panel = document.getElementById('stats-panel');
   if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
-  renderStats();
+  await renderStats();
   panel.style.display = 'block';
   panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function closeStats() { document.getElementById('stats-panel').style.display = 'none'; }
 
-function renderStats() {
-  const stats = loadStats();
+async function renderStats() {
+  let stats = { countM: 0, countF: 0, countD: 0, totalM: 0, totalF: 0, sins: {} };
+  try {
+    const res = await fetch(API_BASE + '/stats');
+    stats = await res.json();
+  } catch {}
   const s = I18N[currentLang];
   const avgM = stats.countM ? Math.round(stats.totalM / stats.countM) : 0;
   const avgF = stats.countF ? Math.round(stats.totalF / stats.countF) : 0;
