@@ -416,10 +416,14 @@
     }
 
     .stats-overview {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
       margin-bottom: 20px;
-      flex-wrap: wrap;
+    }
+
+    .stats-box-full {
+      grid-column: 1 / -1;
     }
 
     .stats-box {
@@ -928,7 +932,7 @@ async function renderStats() {
   const avgF = stats.countF ? stats.totalF / stats.countF : 0;
 
   document.getElementById('stats-overview').innerHTML = `
-    <div class="stats-box"><div class="val">${stats.countM + stats.countF}</div><div class="lbl">${s.statsTotal}</div></div>
+    <div class="stats-box stats-box-full"><div class="val">${stats.countM + stats.countF}</div><div class="lbl">${s.statsTotal}</div></div>
     <div class="stats-box"><div class="val">${stats.countM}</div><div class="lbl">${s.statsMale}</div></div>
     <div class="stats-box"><div class="val">${stats.countF}</div><div class="lbl">${s.statsFemale}</div></div>
     <div class="stats-box"><div class="val">${formatEUR(avgM)}</div><div class="lbl">${s.statsAvgM}</div></div>
