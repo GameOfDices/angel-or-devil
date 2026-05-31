@@ -674,8 +674,8 @@ const I18N = {
     statsTotal: 'Einträge',
     statsMale: 'Männlich',
     statsFemale: 'Weiblich',
-    statsAvgM: 'Ø Punkte ♂',
-    statsAvgF: 'Ø Punkte ♀',
+    statsAvgM: 'Ø EUR ♂',
+    statsAvgF: 'Ø EUR ♀',
     statsSin: 'Sünde',
     statsColM: '♂',
     statsColF: '♀',
@@ -702,8 +702,8 @@ const I18N = {
     statsTotal: 'Entries',
     statsMale: 'Male',
     statsFemale: 'Female',
-    statsAvgM: 'Avg Points ♂',
-    statsAvgF: 'Avg Points ♀',
+    statsAvgM: 'Avg EUR ♂',
+    statsAvgF: 'Avg EUR ♀',
     statsSin: 'Sin',
     statsColM: '♂',
     statsColF: '♀',
@@ -730,8 +730,8 @@ const I18N = {
     statsTotal: 'Записей',
     statsMale: 'Мужчин',
     statsFemale: 'Женщин',
-    statsAvgM: 'Ср. баллы ♂',
-    statsAvgF: 'Ср. баллы ♀',
+    statsAvgM: 'Ø EUR ♂',
+    statsAvgF: 'Ø EUR ♀',
     statsSin: 'Грех',
     statsColM: '♂',
     statsColF: '♀',
@@ -758,8 +758,8 @@ const I18N = {
     statsTotal: 'Записів',
     statsMale: 'Чоловіків',
     statsFemale: 'Жінок',
-    statsAvgM: 'Сер. бали ♂',
-    statsAvgF: 'Сер. бали ♀',
+    statsAvgM: 'Ø EUR ♂',
+    statsAvgF: 'Ø EUR ♀',
     statsSin: 'Гріх',
     statsColM: '♂',
     statsColF: '♀',
@@ -930,15 +930,15 @@ async function renderStats() {
     stats = await res.json();
   } catch {}
   const s = I18N[currentLang];
-  const avgM = stats.countM ? Math.round(stats.totalM / stats.countM) : 0;
-  const avgF = stats.countF ? Math.round(stats.totalF / stats.countF) : 0;
+  const avgM = stats.countM ? stats.totalM / stats.countM : 0;
+  const avgF = stats.countF ? stats.totalF / stats.countF : 0;
 
   document.getElementById('stats-overview').innerHTML = `
-    <div class="stats-box"><div class="val">${stats.countM + stats.countF}</div><div class="lbl">${s.statsTotal}</div></div>
+    <div class="stats-box"><div class="val">${stats.countM + stats.countF + (stats.countD || 0)}</div><div class="lbl">${s.statsTotal}</div></div>
     <div class="stats-box"><div class="val">${stats.countM}</div><div class="lbl">${s.statsMale}</div></div>
     <div class="stats-box"><div class="val">${stats.countF}</div><div class="lbl">${s.statsFemale}</div></div>
-    <div class="stats-box"><div class="val">${avgM}</div><div class="lbl">${s.statsAvgM}</div></div>
-    <div class="stats-box"><div class="val">${avgF}</div><div class="lbl">${s.statsAvgF}</div></div>
+    <div class="stats-box"><div class="val">${formatEUR(avgM)}</div><div class="lbl">${s.statsAvgM}</div></div>
+    <div class="stats-box"><div class="val">${formatEUR(avgF)}</div><div class="lbl">${s.statsAvgF}</div></div>
   `;
 
   const maxCount = Math.max(1, ...Object.values(stats.sins).map(v => (v.m || 0) + (v.f || 0)));
