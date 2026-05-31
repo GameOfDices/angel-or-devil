@@ -513,7 +513,6 @@
         <div class="gender-buttons">
           <button class="gender-btn" data-gender="m" onclick="setGender('m')" id="g-m">♂ Männlich</button>
           <button class="gender-btn" data-gender="f" onclick="setGender('f')" id="g-f">♀ Weiblich</button>
-          <button class="gender-btn" data-gender="d" onclick="setGender('d')" id="g-d">⚡ Divers</button>
         </div>
       </div>
     </div>
@@ -663,7 +662,6 @@ const I18N = {
     lblGender: 'Geschlecht',
     genderM: '♂ Männlich',
     genderF: '♀ Weiblich',
-    genderD: '⚡ Divers',
     calcBtn: 'Berechne mein Urteil',
     formHint: 'Wähle mindestens eine Sünde und gib deinen Namen ein',
     resetBtn: '↺ Nochmal',
@@ -691,7 +689,6 @@ const I18N = {
     lblGender: 'Gender',
     genderM: '♂ Male',
     genderF: '♀ Female',
-    genderD: '⚡ Other',
     calcBtn: 'Calculate my verdict',
     formHint: 'Select at least one sin and enter your name',
     resetBtn: '↺ Play again',
@@ -719,7 +716,6 @@ const I18N = {
     lblGender: 'Пол',
     genderM: '♂ Мужской',
     genderF: '♀ Женский',
-    genderD: '⚡ Другой',
     calcBtn: 'Вынести приговор',
     formHint: 'Выбери хотя бы один грех и введи своё имя',
     resetBtn: '↺ Ещё раз',
@@ -747,7 +743,6 @@ const I18N = {
     lblGender: 'Стать',
     genderM: '♂ Чоловічий',
     genderF: '♀ Жіночий',
-    genderD: '⚡ Інший',
     calcBtn: 'Винести вирок',
     formHint: 'Обери хоча б один гріх і введи своє ім\'я',
     resetBtn: '↺ Ще раз',
@@ -854,7 +849,6 @@ function setLang(lang) {
   document.getElementById('lbl-gender').textContent = s.lblGender;
   document.getElementById('g-m').textContent = s.genderM;
   document.getElementById('g-f').textContent = s.genderF;
-  document.getElementById('g-d').textContent = s.genderD;
   document.getElementById('calc-btn-text').textContent = s.calcBtn;
   document.getElementById('form-hint').textContent = s.formHint;
   document.getElementById('reset-btn').textContent = s.resetBtn;
@@ -878,7 +872,7 @@ async function calculate() {
 
   const tiers = TIERS[currentLang];
   const tier = tiers.find(t => score >= t.min && score <= t.max) || tiers[tiers.length - 1];
-  const gKey = selectedGender === 'm' ? 'm' : selectedGender === 'f' ? 'f' : 'd';
+  const gKey = selectedGender === 'm' ? 'm' : 'f';
 
   const card = document.getElementById('result-card');
   card.className = 'result-card ' + tier.cls;
@@ -924,7 +918,7 @@ async function toggleStats() {
 function closeStats() { document.getElementById('stats-panel').style.display = 'none'; }
 
 async function renderStats() {
-  let stats = { countM: 0, countF: 0, countD: 0, totalM: 0, totalF: 0, sins: {} };
+  let stats = { countM: 0, countF: 0, totalM: 0, totalF: 0, sins: {} };
   try {
     const res = await fetch(API_BASE + '/stats');
     stats = await res.json();
@@ -934,7 +928,7 @@ async function renderStats() {
   const avgF = stats.countF ? stats.totalF / stats.countF : 0;
 
   document.getElementById('stats-overview').innerHTML = `
-    <div class="stats-box"><div class="val">${stats.countM + stats.countF + (stats.countD || 0)}</div><div class="lbl">${s.statsTotal}</div></div>
+    <div class="stats-box"><div class="val">${stats.countM + stats.countF}</div><div class="lbl">${s.statsTotal}</div></div>
     <div class="stats-box"><div class="val">${stats.countM}</div><div class="lbl">${s.statsMale}</div></div>
     <div class="stats-box"><div class="val">${stats.countF}</div><div class="lbl">${s.statsFemale}</div></div>
     <div class="stats-box"><div class="val">${formatEUR(avgM)}</div><div class="lbl">${s.statsAvgM}</div></div>
