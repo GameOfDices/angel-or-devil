@@ -873,6 +873,7 @@ async function calculate() {
   checked.forEach(id => { score += PRICES[SINS[id].p]; });
 
   await recordStats(selectedGender, score);
+  document.getElementById('calc-btn').disabled = true;
 
   const tiers = TIERS[currentLang];
   const tier = tiers.find(t => score >= t.min && score <= t.max) || tiers[tiers.length - 1];
