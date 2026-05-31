@@ -318,6 +318,7 @@
       font-size: 1rem;
       line-height: 1.7;
       color: #444;
+      white-space: pre-line;
       max-width: 500px;
       margin: 0 auto 24px;
     }
@@ -667,6 +668,7 @@ const I18N = {
     formHint: 'Wähle mindestens eine Sünde und gib deinen Namen ein',
     resetBtn: '↺ Nochmal',
     scoreUnit: 'EUR',
+    sinValueLabel: 'Der Wert deiner Sünden beträgt:',
     sinCountLabel: '{count} Sünden ausgewählt',
     statsHeading: '📊 Statistiken',
     statsTotal: 'Einträge',
@@ -694,6 +696,7 @@ const I18N = {
     formHint: 'Select at least one sin and enter your name',
     resetBtn: '↺ Play again',
     scoreUnit: 'EUR',
+    sinValueLabel: 'The value of your sins is:',
     sinCountLabel: '{count} sins selected',
     statsHeading: '📊 Statistics',
     statsTotal: 'Entries',
@@ -721,6 +724,7 @@ const I18N = {
     formHint: 'Выбери хотя бы один грех и введи своё имя',
     resetBtn: '↺ Ещё раз',
     scoreUnit: 'EUR',
+    sinValueLabel: 'Стоимость твоих грехов составляет:',
     sinCountLabel: 'Выбрано {count} грехов',
     statsHeading: '📊 Статистика',
     statsTotal: 'Записей',
@@ -748,6 +752,7 @@ const I18N = {
     formHint: 'Обери хоча б один гріх і введи своє ім\'я',
     resetBtn: '↺ Ще раз',
     scoreUnit: 'EUR',
+    sinValueLabel: 'Вартість твоїх гріхів становить:',
     sinCountLabel: 'Вибрано {count} гріхів',
     statsHeading: '📊 Статистика',
     statsTotal: 'Записів',
@@ -880,9 +885,8 @@ async function calculate() {
   document.getElementById('result-emoji').textContent = tier.emoji;
   document.getElementById('result-name-text').textContent = name;
   document.getElementById('result-title-text').textContent = tier.title[gKey];
-  document.getElementById('result-body-text').textContent = tier.text[gKey].replace('{name}', name);
-
   const s = I18N[currentLang];
+  document.getElementById('result-body-text').textContent = tier.text[gKey].replace('{name}', name) + '\n\n' + s.sinValueLabel;
   document.getElementById('result-score-number').textContent = formatEUR(score);
   document.getElementById('result-score-unit').textContent = s.scoreUnit;
   document.getElementById('result-sin-count').textContent = s.sinCountLabel.replace('{count}', checked.size);
